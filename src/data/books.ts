@@ -2,6 +2,7 @@ import { Book } from "@/types/types";
 
 export const books: Book[] = [
     {
+        id: 0,
         title: "Even If This Love Disappears Tonight",
         author: "",
         chapter: 100,
@@ -12,6 +13,7 @@ export const books: Book[] = [
         description: "About..."
     },
     {
+        id: 1,
         title: "Three Days of Happiness",
         author: "",
         chapter: 100,
@@ -22,6 +24,7 @@ export const books: Book[] = [
         description: "About..."
     },
     {
+        id: 2,
         title: "Weathering with You",
         author: "",
         chapter: 100,
@@ -32,6 +35,7 @@ export const books: Book[] = [
         description: "About..."
     },
     {
+        id: 3,
         title: "Your Name",
         author: "",
         chapter: 100,

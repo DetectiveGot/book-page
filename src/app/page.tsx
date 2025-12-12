@@ -2,12 +2,43 @@
 import { books } from "@/data/books";
 import { type Book } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Container } from "@/ui/Container";
+import { cn } from "@/lib/utils";
+import { only } from "node:test";
 
 export default function Home() {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [onlyFav, setOnlyFav] = useState<boolean>(false);
+  const [editingMode, setEditingMode] = useState<boolean>(false);
+  const favList = useMemo<Book[]>(() => {
+    return bookList.filter((book) => book.isFav);
+  }, [bookList]);
+  const [removeIdList, setRemoveIdList] = useState<Set<number>>(new Set());
+
+  const toggleFav = (id: number) => {
+    if(editingMode) return;
+    let addFavBook: Book|null = null;
+    setBookList((pv) => (
+      pv.map((book) =>{
+        if(book.id===id) {
+          if(!book.isFav) addFavBook = {...book};
+          return {...book, isFav: !book.isFav};
+        }
+        return book;
+      })
+    ))
+  };
+  const toggleRemoveFav = (id: number) => {
+    if(!editingMode) return;
+    setRemoveIdList((pv) => {
+      const cp = new Set(pv);
+      if(cp.has(id)) cp.delete(id);
+      else cp.add(id);
+      return cp;
+    })
+  }
+
   return (
     <div>
       <section className="bg-black min-h-40">
@@ -16,20 +47,71 @@ export default function Home() {
       <main>
         <section className="border border-stone-300">
           <Container className="pt-7 flex gap-x-5">
-            <button className="text-lg">หนังสือทั้งหมด</button>
-            <button className="text-lg">รายการที่คั่นไว้</button>
+            <button className={cn("text-lg active:font-bold", !onlyFav&&"font-bold")} onClick={() => {
+              setOnlyFav(false);
+              setEditingMode(false);
+            }}>หนังสือทั้งหมด</button>
+            <button className={cn("text-lg active:font-bold", onlyFav&&"font-bold")} onClick={() => {
+              setOnlyFav(true);
+            }}>รายการที่คั่นไว้</button>
           </Container>
         </section>
         <section className="py-3">
           <Container className="space-y-3">
             <div className="w-full h-10 flex justify-between items-center">
-              <h4>Total: {bookList.length}</h4>
-              <button className="rounded-full py-1 px-4 border border-stone-200">Edit</button>
+              <h4>Total: {onlyFav?favList.length:bookList.length}</h4>
+              <div className="flex gap-x-3">
+                {editingMode &&
+                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                    setEditingMode(false);
+                    setRemoveIdList(new Set());
+                  }}>ยกเลิก</button>
+                }
+                {editingMode && 
+                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                    setEditingMode(false);
+                    setBookList((pv) => pv.map((book) => removeIdList.has(book.id)?{...book, isFav: false}:book));
+                    // console.log(removeIdList);
+                    setRemoveIdList(new Set());
+                  }}>ลบ</button>
+                }
+                {onlyFav && !editingMode && 
+                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                    setEditingMode((p) => !p);
+                  }}>แก้ไข</button>
+                }
+                </div>
             </div>
             <div className="w-full grid grid-cols-3 gap-4">
-              {bookList.map((book) => (
-                <BookCard key={book.title} book={book}/>
-              ))}
+              {/* {!onlyFav && bookList.map((book) => {
+                if(!onlyFav || (onlyFav && book.isFav)) {
+                  return (
+                    <BookCard key={book.id} 
+                      book={book} 
+                      toggleFav={toggleFav} 
+                      editingMode={editingMode} 
+                      toggleRemoveFav={() => toggleRemoveFav(book.id)}
+                      toRemove={removeIdList.has(book.id)}
+                    />
+                  )
+                }
+              })} */}
+              {(() => {
+                let showList = [];
+                if(onlyFav) showList = favList;
+                else showList = bookList;
+                return (
+                  showList.map((book) => (
+                    <BookCard key={book.id} 
+                      book={book} 
+                      toggleFav={toggleFav} 
+                      editingMode={editingMode} 
+                      toggleRemoveFav={() => toggleRemoveFav(book.id)}
+                      toRemove={removeIdList.has(book.id)}
+                    />
+                  ))
+                )
+              })()}
             </div>
           </Container>
         </section>
