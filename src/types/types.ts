@@ -9,3 +9,9 @@ export type Book = {
     genre: string[]|null,
     description: string
 };
+
+export type Banner = {
+    id: number,
+    title: string,
+    imageUrl: string,
+}

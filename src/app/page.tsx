@@ -1,11 +1,12 @@
 "use client"
 import { books } from "@/data/books";
-import { type Book } from "@/types/types";
+import { type Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
 import { useState, useMemo } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
-import { only } from "node:test";
+import { ImageSlider } from "@/component/ImageSlider";
+import { banners } from "@/data/banners";
 
 export default function Home() {
   const [bookList, setBookList] = useState<Book[]>(books);
@@ -15,6 +16,7 @@ export default function Home() {
     return bookList.filter((book) => book.isFav);
   }, [bookList]);
   const [removeIdList, setRemoveIdList] = useState<Set<number>>(new Set());
+  const [bannerList, setBannerList] = useState<Banner[]>(banners);
 
   const toggleFav = (id: number) => {
     if(editingMode) return;
@@ -41,8 +43,8 @@ export default function Home() {
 
   return (
     <div>
-      <section className="bg-black min-h-40">
-        <h1 className="text-white text-2xl">Banner Part</h1>
+      <section className="">
+        <ImageSlider banners={bannerList}/>
       </section>
       <main>
         <section className="border border-stone-300">
