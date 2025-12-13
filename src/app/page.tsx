@@ -7,6 +7,7 @@ import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
+import { Button } from "@/ui/button";
 // import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Home() {
@@ -50,13 +51,13 @@ export default function Home() {
       <main>
         <section className="border border-stone-300">
           <Container className="pt-7 flex gap-x-5">
-            <button className={cn("text-md md:text-lg active:font-bold", !onlyFav&&"font-bold")} onClick={() => {
+            <Button variant={"header"} size={"header"} className={cn("transition-opacity duration-100 hover:opacity-50",!onlyFav&&"font-bold")} onClick={() => {
               setOnlyFav(false);
               setEditingMode(false);
-            }}>หนังสือทั้งหมด</button>
-            <button className={cn("text-md md:text-lg active:font-bold", onlyFav&&"font-bold")} onClick={() => {
+            }}>หนังสือทั้งหมด</Button>
+            <Button variant={"header"} size={"header"} className={cn("transition-opacity duration-100 hover:opacity-50",onlyFav&&"font-bold")} onClick={() => {
               setOnlyFav(true);
-            }}>รายการที่คั่นไว้</button>
+            }}>รายการที่คั่นไว้</Button>
           </Container>
         </section>
         <section className="py-3">
@@ -65,23 +66,23 @@ export default function Home() {
               <h4 className="text-sm md:text-md">Total: {onlyFav?favList.length:bookList.length}</h4>
               <div className="flex gap-x-3">
                 {editingMode &&
-                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                  <Button variant={"edit"} size={"sm"} onClick={() => {
                     setEditingMode(false);
                     setRemoveIdList(new Set());
-                  }}>ยกเลิก</button>
+                  }}>ยกเลิก</Button>
                 }
                 {editingMode && 
-                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                  <Button variant={"edit"} size={"sm"} className="" onClick={() => {
                     setEditingMode(false);
                     setBookList((pv) => pv.map((book) => removeIdList.has(book.id)?{...book, isFav: false}:book));
                     // console.log(removeIdList);
                     setRemoveIdList(new Set());
-                  }}>ลบ</button>
+                  }}>ลบ</Button>
                 }
                 {onlyFav && !editingMode && 
-                  <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
+                  <Button variant={"edit"} size={"sm"} onClick={() => {
                     setEditingMode((p) => !p);
-                  }}>แก้ไข</button>
+                  }}>แก้ไข</Button>
                 }
                 </div>
             </div>

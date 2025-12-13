@@ -4,6 +4,7 @@ import { Bookmark, Circle, CircleCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
 import React from "react";
+import { Button } from "@/ui/button";
 
 type BookCardProps = React.HTMLAttributes<HTMLDivElement> & {
     book: Book;
@@ -26,7 +27,7 @@ const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, to
         description
     } = book;
     return (
-        <div ref={ref} className={cn(className, "flex justify-between rounded-md shadow h-24 lg:h-32")} {...props}>
+        <div ref={ref} className={cn(className, "flex justify-between rounded-md shadow h-24 lg:h-32 transition-shadow duration-100 hover:shadow-stone-300")} {...props}>
             <a href="/" className="min-w-0 flex-1">
                 <div className="flex h-full">
                     <div className="shrink-0 h-full w-20 lg:w-24 relative">
@@ -49,17 +50,17 @@ const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, to
                     </div>
                 </div>
             </a>
-            <button className="border-l border-r-stone-300 p-2"
+            <Button className="border-l border-r-stone-300 p-2"
                 onClick={() => {
                     if(!editingMode) toggleFav(id);
                     else toggleRemoveFav(id);
                 }}
             >
                 {(() => {
-                    if(editingMode) return toRemove?<CircleCheck className="w-4 h-4 sm:w-6 sm:h-6"/>:<Circle className="w-4 h-4 sm:w-6 sm:h-6"/>;
-                    return <Bookmark className={cn("w-4 h-4 sm:w-6 sm:h-6",book.isFav&&"fill-yellow-300")}/>;
+                    if(editingMode) return toRemove?<CircleCheck className="w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70"/>:<Circle className="w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70"/>;
+                    return <Bookmark className={cn("w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70",book.isFav&&"fill-yellow-300")}/>;
                 })()}
-            </button>
+            </Button>
         </div>
     )
 });
