@@ -21,4 +21,9 @@ export const banners: Banner[] = [
         title: "Banner",
         imageUrl: "/bannerImages/banner3.jpg",
     },
+    {
+        id: 4,
+        title: "Banner",
+        imageUrl: "/bannerImages/banner4.jpg",
+    },
 ]

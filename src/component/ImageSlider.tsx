@@ -7,11 +7,12 @@ import {
   CarouselPrevious,
 } from "@/ui/carousel";
 import { Banner } from "@/types/types";
+import Autoplay from "embla-carousel-autoplay"
 
 const ImageSlider = ({banners}:{banners: Banner[]}) => {
     return (
         <a href="/">
-            <Carousel>
+            <Carousel opts={{loop: true}} plugins={[Autoplay({delay: 3000})]}>
                 <CarouselContent className="-ml-4">
                     {banners.map((banner) => {
                         return (
