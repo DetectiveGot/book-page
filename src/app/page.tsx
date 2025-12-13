@@ -2,11 +2,12 @@
 import { books } from "@/data/books";
 import { type Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
+// import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [bookList, setBookList] = useState<Book[]>(books);
@@ -49,11 +50,11 @@ export default function Home() {
       <main>
         <section className="border border-stone-300">
           <Container className="pt-7 flex gap-x-5">
-            <button className={cn("text-lg active:font-bold", !onlyFav&&"font-bold")} onClick={() => {
+            <button className={cn("text-md md:text-lg active:font-bold", !onlyFav&&"font-bold")} onClick={() => {
               setOnlyFav(false);
               setEditingMode(false);
             }}>หนังสือทั้งหมด</button>
-            <button className={cn("text-lg active:font-bold", onlyFav&&"font-bold")} onClick={() => {
+            <button className={cn("text-md md:text-lg active:font-bold", onlyFav&&"font-bold")} onClick={() => {
               setOnlyFav(true);
             }}>รายการที่คั่นไว้</button>
           </Container>
@@ -61,7 +62,7 @@ export default function Home() {
         <section className="py-3">
           <Container className="space-y-3">
             <div className="w-full h-10 flex justify-between items-center">
-              <h4>Total: {onlyFav?favList.length:bookList.length}</h4>
+              <h4 className="text-sm md:text-md">Total: {onlyFav?favList.length:bookList.length}</h4>
               <div className="flex gap-x-3">
                 {editingMode &&
                   <button className="rounded-full py-1 px-4 border border-stone-200" onClick={() => {
@@ -84,20 +85,7 @@ export default function Home() {
                 }
                 </div>
             </div>
-            <div className="w-full grid grid-cols-3 gap-4">
-              {/* {!onlyFav && bookList.map((book) => {
-                if(!onlyFav || (onlyFav && book.isFav)) {
-                  return (
-                    <BookCard key={book.id} 
-                      book={book} 
-                      toggleFav={toggleFav} 
-                      editingMode={editingMode} 
-                      toggleRemoveFav={() => toggleRemoveFav(book.id)}
-                      toRemove={removeIdList.has(book.id)}
-                    />
-                  )
-                }
-              })} */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
                 let showList = [];
                 if(onlyFav) showList = favList;
@@ -117,6 +105,15 @@ export default function Home() {
             </div>
           </Container>
         </section>
+        {/* <section className="h-24 py-6">
+          <Container className="relative">
+            <div className="flex gap-x-3 justify-end">
+              <div><ArrowLeft/></div>
+              <h1>Page</h1>
+              <div><ArrowRight/></div>
+            </div>
+          </Container>
+        </section> */}
       </main>
     </div>
   );

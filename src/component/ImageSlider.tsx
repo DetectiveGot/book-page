@@ -14,8 +14,8 @@ const ImageSlider = ({banners}:{banners: Banner[]}) => {
             <CarouselContent className="-ml-4">
                 {banners.map((banner) => {
                     return (
-                        <CarouselItem key={banner.id} className="pl-4 basis-1/3">
-                            <div className="relative w-full h-72">
+                        <CarouselItem key={banner.id} className="pl-4 basis-1/1 md:basis-1/2 lg:basis-1/3">
+                            <div className="relative w-full h-48 md:h-56 lg:h-72">
                                 <Image src={banner.imageUrl} fill alt={banner.title}/>
                             </div>
                         </CarouselItem>
