@@ -2,13 +2,13 @@
 import { books } from "@/data/books";
 import { type Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, use } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
-// import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [bookList, setBookList] = useState<Book[]>(books);
@@ -19,6 +19,10 @@ export default function Home() {
   }, [bookList]);
   const [removeIdList, setRemoveIdList] = useState<Set<number>>(new Set());
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const perPage = 12;
+  const showList = onlyFav?favList:bookList;
+  const totalPage = Math.ceil(showList.length/perPage);
 
   const toggleFav = (id: number) => {
     if(editingMode) return;
@@ -43,6 +47,10 @@ export default function Home() {
     })
   }
 
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [onlyFav]);
+
   return (
     <div>
       <section className="">
@@ -66,13 +74,13 @@ export default function Home() {
               <h4 className="text-sm md:text-md">Total: {onlyFav?favList.length:bookList.length}</h4>
               <div className="flex gap-x-3">
                 {editingMode &&
-                  <Button variant={"edit"} size={"sm"} onClick={() => {
+                  <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100" onClick={() => {
                     setEditingMode(false);
                     setRemoveIdList(new Set());
                   }}>ยกเลิก</Button>
                 }
                 {editingMode && 
-                  <Button variant={"edit"} size={"sm"} className="" onClick={() => {
+                  <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-red-200" onClick={() => {
                     setEditingMode(false);
                     setBookList((pv) => pv.map((book) => removeIdList.has(book.id)?{...book, isFav: false}:book));
                     // console.log(removeIdList);
@@ -80,7 +88,7 @@ export default function Home() {
                   }}>ลบ</Button>
                 }
                 {onlyFav && !editingMode && 
-                  <Button variant={"edit"} size={"sm"} onClick={() => {
+                  <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100" onClick={() => {
                     setEditingMode((p) => !p);
                   }}>แก้ไข</Button>
                 }
@@ -88,11 +96,8 @@ export default function Home() {
             </div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
-                let showList = [];
-                if(onlyFav) showList = favList;
-                else showList = bookList;
                 return (
-                  showList.map((book) => (
+                  showList.slice(currentPage*perPage, Math.min((currentPage+1)*perPage, totalPage*perPage)).map((book) => (
                     <BookCard key={book.id} 
                       book={book} 
                       toggleFav={toggleFav} 
@@ -106,15 +111,24 @@ export default function Home() {
             </div>
           </Container>
         </section>
-        {/* <section className="h-24 py-6">
+        <section className="h-24 py-6">
           <Container className="relative">
             <div className="flex gap-x-3 justify-end">
-              <div><ArrowLeft/></div>
-              <h1>Page</h1>
-              <div><ArrowRight/></div>
+              <Button disabled={editingMode || currentPage===0} className="disabled:opacity-40 disabled:cursor-default" onClick={() => {
+                if(editingMode) return;
+                setCurrentPage((pv) => Math.max(pv-1, 0));
+              }}><ArrowLeft/></Button>
+              <h1>Page {currentPage+1}</h1>
+              <Button disabled={editingMode || (currentPage+1>=totalPage)} className="disabled:opacity-40 disabled:cursor-default" onClick={() => {
+                if(editingMode) return;
+                setCurrentPage((pv) => {
+                  if(pv+1<Math.ceil(showList.length/perPage)) return pv+1;
+                  return pv;
+                })
+              }}><ArrowRight/></Button>
             </div>
           </Container>
-        </section> */}
+        </section>
       </main>
     </div>
   );

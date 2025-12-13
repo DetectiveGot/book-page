@@ -122,4 +122,37 @@ export const books: Book[] = [
         genre: ["book", "very good"],
         description: "About..."
     },
+    {
+        id: 11,
+        title: "What If?",
+        author: "Anonymous",
+        chapter: 100,
+        currentChapter: 1,
+        isFav: false,
+        imageUrl: "/bookImages/whatif.jpg",
+        genre: ["book", "very good"],
+        description: "About..."
+    },
+    {
+        id: 12,
+        title: "What If?",
+        author: "Anonymous",
+        chapter: 100,
+        currentChapter: 1,
+        isFav: false,
+        imageUrl: "/bookImages/whatif.jpg",
+        genre: ["book", "very good"],
+        description: "About..."
+    },
+    {
+        id: 13,
+        title: "What If?",
+        author: "Anonymous",
+        chapter: 100,
+        currentChapter: 1,
+        isFav: false,
+        imageUrl: "/bookImages/whatif.jpg",
+        genre: ["book", "very good"],
+        description: "About..."
+    },
 ]
