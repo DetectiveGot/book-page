@@ -7,11 +7,12 @@ export type Book = {
     isFav: boolean,
     imageUrl: string,
     genre: string[]|null,
-    description: string
+    description: string,
 };
 
 export type Banner = {
     id: number,
     title: string,
     imageUrl: string,
+    linkUrl: string,
 }
