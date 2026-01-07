@@ -9,9 +9,9 @@ A UX/UI page that shows list a page of books.
 - Lucide Icons
 
 ## Installation
-1. Cone the repo
-    git clone https://github.com/DetectiveGot/book-page.git
-2. Install dependencies
-    pnpm i
-3. Run the project locally
-    pnpm run dev
+```bash
+git clone https://github.com/DetectiveGot/book-page.git
+cd book-page
+pnpm i
+pnpm run dev
+```
