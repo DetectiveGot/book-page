@@ -9,6 +9,7 @@ import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Navbar } from "@/component/Navbar";
 
 export default function Home() {
   const [bookList, setBookList] = useState<Book[]>(books);
@@ -53,6 +54,7 @@ export default function Home() {
 
   return (
     <div>
+      <Navbar/>
       <section className="">
         <ImageSlider banners={bannerList}/>
       </section>
