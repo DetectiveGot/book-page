@@ -7,8 +7,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 
 const Navbar = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({className, ...props}, ref) => {
-    const { user, isLoading } = useUser();
-    console.log(user);
+    const { user } = useUser();
     return (
         <nav ref={ref} {...props}
             className={cn("shadow content-center", className)}
