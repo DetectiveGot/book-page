@@ -1,5 +1,5 @@
 import { connectMongoDB } from "@/lib/mongoosedb";
-import bookmark from "@/models/bookmark";
+import bookmarkModel from "@/models/bookmarkModel";
 import { NextRequest, NextResponse } from "next/server";
 // import mongoose from "mongoose";
 import { auth0 } from "@/lib/auth0";
@@ -13,6 +13,6 @@ export async function GET(req: NextRequest) {
     } 
     const userSub = session.user.sub;
 
-    const bookmarkItems = await bookmark.find({userSub}).limit(20).lean();
+    const bookmarkItems = await bookmarkModel.find({userSub}).limit(20).lean();
     return NextResponse.json({bookmarkItems});
 }

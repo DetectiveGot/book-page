@@ -2,7 +2,7 @@
 import { books } from "@/data/books";
 import { type Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState, useMemo, useEffect, useRef, use } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
