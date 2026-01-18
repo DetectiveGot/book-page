@@ -16,7 +16,7 @@ const ImageSlider = ({banners}:{banners: Banner[]}) => {
             <CarouselContent className="-ml-4">
                 {banners.map((banner) => {
                     return (
-                        <CarouselItem key={banner.id} className="pl-4 basis-1/1 md:basis-1/2 lg:basis-1/3">
+                        <CarouselItem key={banner._id} className="pl-4 basis-1/1 md:basis-1/2 lg:basis-1/3">
                             <Link href={banner.linkUrl}>
                                 <div className="relative w-full h-48 md:h-56 lg:h-72 transition-transform hover:scale-105">
                                     <Image 

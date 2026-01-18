@@ -12,7 +12,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";
 
-export default function BookClient({books, initBookmarked}:{books: Book[], initBookmarked: string[]}) {
+export default function BookmarkClient({books, initBookmarked}:{books: Book[], initBookmarked: string[]}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [onlyFav, setOnlyFav] = useState<boolean>(false);
@@ -68,14 +68,15 @@ export default function BookClient({books, initBookmarked}:{books: Book[], initB
       <main>
         <section className="border border-stone-300">
           <Container className="pt-7 flex gap-x-5">
-            <Link href={'/'}><Button variant={"header"} size={"header"} className={cn("transition-opacity duration-100 hover:opacity-50 font-bold")} >หนังสือทั้งหมด</Button></Link>
-            <Link href={'/bookmark'}><Button variant={"header"} size={"header"} className={cn("transition-opacity duration-100 hover:opacity-50")} >รายการที่คั่นไว้</Button></Link>
+            <Link href={'/'}><Button variant={"header"} size={"header"} className="transition-opacity duration-100 hover:opacity-50" >หนังสือทั้งหมด</Button></Link>
+            <Link href={'/bookmark'}><Button variant={"header"} size={"header"} className="transition-opacity duration-100 hover:opacity-50 font-bold" >รายการที่คั่นไว้</Button></Link>
           </Container>
         </section>
         <section className="py-3">
           <Container className="space-y-3">
             <div className="w-full h-10 flex justify-between items-center">
               <h4 className="text-sm md:text-md">Total: {bookList.length}</h4>
+              <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100">แก้ไข</Button>
             </div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
