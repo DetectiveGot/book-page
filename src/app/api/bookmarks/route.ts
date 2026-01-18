@@ -3,6 +3,9 @@ import bookmarkModel from "@/models/bookmarkModel";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { auth0 } from "@/lib/auth0";
+import bookModel from "@/models/bookModel";
+
+const PER_PAGE = 12;
 
 export async function GET(req: NextRequest) {
     const session = await auth0.getSession();
@@ -10,11 +13,24 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({error: "Unauthorized"}, {status: 401});
     } 
     const userSub = session.user.sub;
+    const {searchParams} = new URL(req.url);
+    const page = Number(searchParams.get("page")??1);
     await connectMongoDB();
     // console.log("DB:", mongoose.connection.db?.databaseName);
-
-    const bookmarkItems = await bookmarkModel.find({userSub}).limit(20).lean();
-    return NextResponse.json({bookmarkItems});
+    let bookmarks = [];
+    let bookmarkItems = [];
+    let bookmarkItemIds = [];
+    if(userSub) {
+        bookmarks = await bookmarkModel.find({userSub}).skip((page-1)*PER_PAGE).limit(PER_PAGE).lean();
+        const bookmarkIds = bookmarks.map((b) => b.bookId);
+        const books = await bookModel.find({_id: {$in: bookmarkIds}}).limit(PER_PAGE).lean();
+        bookmarkItems = books.map((b) => ({
+            ...b,
+            _id: b._id.toString(),
+        }));
+        bookmarkItemIds = bookmarkIds.map((id) => id.toString());
+    }
+    return NextResponse.json({bookmarkItems, bookmarkItemIds});
 }
 
 export async function POST(req: NextRequest) {

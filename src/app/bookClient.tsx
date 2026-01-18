@@ -55,6 +55,7 @@ export default function BookClient({books, initBookmarked, totalBooks}:{books: B
     }
     const {bookItems, bookmarkIds} = await res.json();
     setBookList(bookItems);
+    setCurrentPage(page);
     setBookmarkedSet(new Set(bookmarkIds));
   }
 

@@ -6,17 +6,19 @@ import { Container } from "@/ui/Container";
 import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";
 
-export default function BookmarkClient({books, initBookmarked}:{books: Book[], initBookmarked: string[]}) {
+const PER_PAGE = 12;
+
+export default function BookmarkClient({books, initBookmarked, totalBooks}:{books: Book[], initBookmarked: string[], totalBooks: number}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [removeIdList, setRemoveIdList] = useState<Set<string>>(new Set());
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
-  // const [currentPage, setCurrentPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const totalPage = Math.ceil(totalBooks/PER_PAGE);
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
@@ -52,10 +54,6 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
       return cp;
     })
   }
-
-//   useEffect(() => {
-//     setCurrentPage(0);
-//   }, [onlyFav]);
 
   const onEdit = () => {
     setEditingMode(true);
@@ -100,6 +98,18 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
     setEditingMode(false);
   }
 
+  const goToPage = async (page: number) => {
+    const res = await fetch(`/api/bookmarks?page=${page}`);
+    if(!res.ok) {
+        alert("Failed to fetch books");
+        throw new Error("Failed to fetch books");
+    }
+    const {bookmarkItems, bookmarkItemIds} = await res.json();
+    setBookList(bookmarkItems);
+    setCurrentPage(page);
+    setBookmarkedSet(new Set(bookmarkItemIds));
+  }
+
   return (
     <div>
       <Navbar/>
@@ -116,7 +126,7 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
         <section className="py-3">
           <Container className="space-y-3">
             <div className="w-full h-10 flex justify-between items-center">
-              <h4 className="text-sm md:text-md">Total: {bookList.length}</h4>
+              <h4 className="text-sm md:text-md">Total: {totalBooks}</h4>
               <div className="flex gap-x-3">
                 {!editingMode && <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100" onClick={onEdit}>แก้ไข</Button>}
                 {editingMode && (
@@ -146,24 +156,31 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
             </div>
           </Container>
         </section>
-        {/* <section className="h-24 py-6">
+        <section className="h-24 py-6">
           <Container className="relative">
-            <div className="flex gap-x-3 justify-end">
-              <Button disabled={editingMode || currentPage===0} className="disabled:opacity-40 disabled:cursor-default" onClick={() => {
-                if(editingMode) return;
-                setCurrentPage((pv) => Math.max(pv-1, 0));
-              }}><ArrowLeft/></Button>
-              <h1>Page {currentPage+1}</h1>
-              <Button disabled={editingMode || (currentPage+1>=totalPage)} className="disabled:opacity-40 disabled:cursor-default" onClick={() => {
-                if(editingMode) return;
-                setCurrentPage((pv) => {
-                  if(pv+1<Math.ceil(showList.length/perPage)) return pv+1;
-                  return pv;
+            <div className="flex gap-x-3 justify-end font-semibold">
+                <span>Page:</span>
+              {(() => {
+                const pages: (number|"...")[] = [];
+                if(currentPage>3) {
+                    pages.push(1);
+                    pages.push("...");
+                    pages.push(currentPage-1);
+                } else for(let i=1;i<currentPage;i++) pages.push(i);
+                pages.push(currentPage)
+                if(currentPage+2<totalPage) {
+                    pages.push(currentPage+1);
+                    pages.push("...");
+                    pages.push(totalPage);
+                } else for(let i=currentPage+1;i<=totalPage;i++) pages.push(i);
+                return pages.map((p, i) => {
+                    if(p==='...') return <span key={i}>...</span>
+                    return <Button key={i} className="transition-opacity duration-100 hover:opacity-50" onClick={async () => goToPage(p)}>{p}</Button>
                 })
-              }}><ArrowRight/></Button>
+              })()}
             </div>
           </Container>
-        </section> */}
+        </section>
       </main>
     </div>
   );
