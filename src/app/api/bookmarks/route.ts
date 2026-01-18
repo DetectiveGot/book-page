@@ -23,13 +23,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Unauthorized"}, {status: 401});
     }
     const userSub = session.user.sub;
-    const { bookId } = await req.json();
+    const { bookIds }: {bookIds: string[]} = await req.json();
+    const postIds = bookIds.filter((id) => mongoose.Types.ObjectId.isValid(id)).map((id) => new mongoose.Types.ObjectId(id));
+    const postData = postIds.map((bookId) => ({
+        userSub,
+        bookId,
+    }))
     await connectMongoDB();
     // console.log("DB:", mongoose.connection.db?.databaseName);
-    await bookmarkModel.create({
-        userSub,
-        bookId: new mongoose.Types.ObjectId(bookId),
-    })
+
+    await bookmarkModel.create(postData);
     return NextResponse.json({ok: true});
 }
 
@@ -39,9 +42,10 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({error: "Unauthorized"}, {status: 401});
     }
     const userSub = session.user.sub;
-    const { bookId } = await req.json();
-    const delId = new mongoose.Types.ObjectId(bookId);
+    const { bookIds }: { bookIds: string[] } = await req.json();
+    const delIds = bookIds.filter((id) => mongoose.Types.ObjectId.isValid(id)).map((id) => new mongoose.Types.ObjectId(id));
     await connectMongoDB();
-    await bookmarkModel.deleteOne({bookId: delId});
-    return NextResponse.json({ok: true});
+
+    const result = await bookmarkModel.deleteMany({userSub, bookId: {$in: delIds}});
+    return NextResponse.json({deletedCount: result.deletedCount});
 }

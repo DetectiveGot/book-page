@@ -1,8 +1,7 @@
 "use client"
-import { books } from "@/data/books";
-import type { Book, Banner, Bookmark } from "@/types/types";
+import type { Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
@@ -15,11 +14,9 @@ import Link from "next/link";
 export default function BookClient({books, initBookmarked}:{books: Book[], initBookmarked: string[]}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
-  const [onlyFav, setOnlyFav] = useState<boolean>(false);
   const [editingMode, setEditingMode] = useState<boolean>(false);
-  const [removeIdList, setRemoveIdList] = useState<Set<number>>(new Set());
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
-  const [currentPage, setCurrentPage] = useState<number>(0);
+//   const [currentPage, setCurrentPage] = useState<number>(0);
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
@@ -32,7 +29,9 @@ export default function BookClient({books, initBookmarked}:{books: Book[], initB
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({bookId: _id}),
+            body: JSON.stringify({
+                bookIds: [_id]
+            }),
         });
         if(!res.ok) throw new Error("Failed");
         setBookmarkedSet(pv => {
@@ -45,15 +44,6 @@ export default function BookClient({books, initBookmarked}:{books: Book[], initB
         alert("Bookmark failed");
     }
   };
-//   const toggleRemoveFav = (id: number) => {
-//     if(!editingMode) return;
-//     setRemoveIdList((pv) => {
-//       const cp = new Set(pv);
-//       if(cp.has(id)) cp.delete(id);
-//       else cp.add(id);
-//       return cp;
-//     })
-//   }
 
 //   useEffect(() => {
 //     setCurrentPage(0);

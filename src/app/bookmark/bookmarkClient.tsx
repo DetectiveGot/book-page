@@ -1,10 +1,8 @@
 "use client"
-import { books } from "@/data/books";
 import type { Book, Banner, Bookmark } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
 import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/ui/Container";
-import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
 import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
@@ -15,11 +13,10 @@ import Link from "next/link";
 export default function BookmarkClient({books, initBookmarked}:{books: Book[], initBookmarked: string[]}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
-  const [onlyFav, setOnlyFav] = useState<boolean>(false);
   const [editingMode, setEditingMode] = useState<boolean>(false);
-  const [removeIdList, setRemoveIdList] = useState<Set<number>>(new Set());
+  const [removeIdList, setRemoveIdList] = useState<Set<string>>(new Set());
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
-  const [currentPage, setCurrentPage] = useState<number>(0);
+  // const [currentPage, setCurrentPage] = useState<number>(0);
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
@@ -32,7 +29,7 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({bookId: _id}),
+            body: JSON.stringify({bookIds: [_id]}),
         });
         if(!res.ok) throw new Error("Failed");
         setBookmarkedSet(pv => {
@@ -40,24 +37,68 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
             if(newFav) newSet.add(_id);
             else newSet.delete(_id);
             return newSet;
-        })
+        });
+        setBookList(pv => pv.filter((b) => b._id!==_id));
     } catch(err) {
         alert("Bookmark failed");
     }
   };
-//   const toggleRemoveFav = (id: number) => {
-//     if(!editingMode) return;
-//     setRemoveIdList((pv) => {
-//       const cp = new Set(pv);
-//       if(cp.has(id)) cp.delete(id);
-//       else cp.add(id);
-//       return cp;
-//     })
-//   }
+  const toggleRemoveFav = (id: string) => {
+    if(!editingMode) return;
+    setRemoveIdList((pv) => {
+      const cp = new Set(pv);
+      if(cp.has(id)) cp.delete(id);
+      else cp.add(id);
+      return cp;
+    })
+  }
 
 //   useEffect(() => {
 //     setCurrentPage(0);
 //   }, [onlyFav]);
+
+  const onEdit = () => {
+    setEditingMode(true);
+    setRemoveIdList(new Set());
+  }
+
+  const onDelete = async () => {
+    if(removeIdList.size===0) {
+        setEditingMode(false);
+        setRemoveIdList(new Set());
+        return;
+    }
+    try {
+        const res = await fetch('/api/bookmarks', {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                bookIds: Array.from(removeIdList),
+            })
+        })
+        if(!res.ok) throw new Error("Delete failed");
+        setBookList(pv => pv.filter((b) => !removeIdList.has(b._id)));
+        setBookmarkedSet(pv => {
+            const newSet = new Set(pv);
+            pv.forEach((b) => {
+                if(removeIdList.has(b)) newSet.delete(b);
+            })
+            return newSet;
+        })
+    } catch(err) {
+        alert("Delete failed");
+    } finally {
+        setEditingMode(false);
+        setRemoveIdList(new Set());
+    }
+  }
+
+  const onCancel = () => {
+    setRemoveIdList(new Set());
+    setEditingMode(false);
+  }
 
   return (
     <div>
@@ -76,7 +117,16 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
           <Container className="space-y-3">
             <div className="w-full h-10 flex justify-between items-center">
               <h4 className="text-sm md:text-md">Total: {bookList.length}</h4>
-              <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100">แก้ไข</Button>
+              <div className="flex gap-x-3">
+                {!editingMode && <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100" onClick={onEdit}>แก้ไข</Button>}
+                {editingMode && (
+                    <>
+                        <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-red-200" onClick={onDelete}>ลบ</Button>
+                        <Button variant={"edit"} size={"sm"} className="transition-colors duration-300 hover:bg-stone-100" onClick={onCancel}>ยกเลิก</Button>
+                    </>
+                )}
+              </div>
+
             </div>
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
@@ -86,6 +136,9 @@ export default function BookmarkClient({books, initBookmarked}:{books: Book[], i
                       book={book} 
                       toggleFav={toggleFav} 
                       bookmarkedSet={bookmarkedSet}
+                      editingMode={editingMode}
+                      toggleRemoveFav={toggleRemoveFav}
+                      toRemove={removeIdList.has(book._id)}
                     />
                   ))
                 )

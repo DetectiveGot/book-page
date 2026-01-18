@@ -54,7 +54,9 @@ const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, to
             <Button className="border-l border-r-stone-300 p-2"
                 onClick={() => {
                     if(!editingMode) toggleFav(_id);
-                    else if(toggleRemoveFav) toggleRemoveFav(_id);
+                    else {
+                        if(toggleRemoveFav) toggleRemoveFav(_id);
+                    } 
                 }}
             >
                 {(() => {
