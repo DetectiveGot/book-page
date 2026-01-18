@@ -9,27 +9,19 @@ export default async function Home() {
   await connectMongoDB();
   const session = await auth0.getSession();
   const userSub = session?.user.sub;
+
+  const books = await bookModel.find().limit(20).lean();
+  const bookIds = books.map(b => b._id);
+  let bookmarkedList: string[] = [];
   if(userSub) {
-    const [books, bookmarks] = await Promise.all([
-      bookModel.find().limit(20).lean(),
-      bookmarkModel.find({userSub}).limit(20)
-    ])
-    const bookmarkedList = bookmarks.map((b) => b.bookId.toString());
-    const bookRes = books.map((b) => ({
-      ...b,
-      _id: b._id.toString(),
-    }))
-    return (
-      <BooksClient books={bookRes} initBookmarked={bookmarkedList}/>
-    );
-  } else {
-    const books = await bookModel.find().limit(20).lean();
-    const bookRes = books.map((b) => ({
-      ...b,
-      _id: b._id.toString(),
-    }))
-    return (
-      <BooksClient books={bookRes} initBookmarked={[]}/>
-    );
+    const bookmarks = await bookmarkModel.find({userSub, bookId: {$in: bookIds}}).select({bookId: 1}).lean();
+    bookmarkedList = bookmarks.map(b => b.bookId.toString());
   }
+  const bookRes = books.map(b => ({
+    ...b,
+    _id: b._id.toString(),
+  }));
+  return (
+    <BooksClient books={bookRes} initBookmarked={bookmarkedList}/>
+  )
 }
