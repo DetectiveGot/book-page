@@ -14,11 +14,6 @@ const BookSchema = new Schema({
         type: Number,
         require: true,
     },
-    currentChapter: {
-        type: Number,
-        require: true,
-        default: 1
-    },
     genre: {
         type: [String],
         require: true,
