@@ -20,4 +20,5 @@ export type Banner = {
 export type Bookmark = {
     _id: string,
     bookId: string,
+    userSub: string,
 }
