@@ -17,7 +17,7 @@ export default async function Page() {
     if(userSub) {
         const [bookmarks, _totalBooks] = await Promise.all([
             await bookmarkModel.find({userSub}).select({bookId: 1}).limit(20).lean(),
-            await bookmarkModel.countDocuments(),
+            await bookmarkModel.countDocuments({userSub}).lean(),
         ]);
         totalBooks = _totalBooks;
         bookmarksId = bookmarks.map((b) => b.bookId.toString());

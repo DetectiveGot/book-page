@@ -14,7 +14,7 @@ export default async function Home() {
 
   const [books, totalBooks] = await Promise.all([
     bookModel.find().limit(PER_PAGE).lean(),
-    bookModel.countDocuments(),
+    bookModel.countDocuments().lean(),
   ]);
   const bookIds = books.map(b => b._id);
   let bookmarkedList: string[] = [];
