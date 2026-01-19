@@ -1,4 +1,4 @@
-import {Schema, models, model} from "mongoose";
+import mongoose, {Schema, models, model} from "mongoose";
 
 const BookmarkSchema = new Schema({
     userSub: {
@@ -7,7 +7,8 @@ const BookmarkSchema = new Schema({
         index: true,
     },
     bookId: {
-        type: String,
+        type: mongoose.Types.ObjectId,
+        ref: "books",
         require: true,
         index: true,
     },
@@ -18,6 +19,6 @@ const BookmarkSchema = new Schema({
     }
 })
 
-BookmarkSchema.index({userSub: 1, _id: 1}, {unique: true});
+BookmarkSchema.index({userSub: 1, bookId: 1}, {unique: true});
 
 export default models.bookmarks || model("bookmarks", BookmarkSchema);

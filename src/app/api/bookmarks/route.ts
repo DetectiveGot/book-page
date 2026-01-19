@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     await connectMongoDB();
     // console.log("DB:", mongoose.connection.db?.databaseName);
 
-    await bookmarkModel.create(postData);
+    await bookmarkModel.insertMany(postData, {ordered: false});
     return NextResponse.json({ok: true});
 }
 
