@@ -11,13 +11,14 @@ import Link from "next/link";
 
 const PER_PAGE = 12;
 
-export default function BookmarkClient({books, initBookmarked, totalBooks}:{books: Book[], initBookmarked: string[], totalBooks: number}) {
+export default function BookmarkClient({books, initBookmarked, initBooks}:{books: Book[], initBookmarked: string[], initBooks: number}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [removeIdList, setRemoveIdList] = useState<Set<string>>(new Set());
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalBooks, setTotalBooks] = useState<number>(initBooks);
   const totalPage = Math.ceil(totalBooks/PER_PAGE);
 
   const toggleFav = async (_id: string) => {
@@ -34,6 +35,7 @@ export default function BookmarkClient({books, initBookmarked, totalBooks}:{book
             body: JSON.stringify({bookIds: [_id]}),
         });
         if(!res.ok) throw new Error("Failed");
+        const {deletedCount} = await res.json();
         setBookmarkedSet(pv => {
             const newSet = new Set(pv);
             if(newFav) newSet.add(_id);
@@ -41,6 +43,7 @@ export default function BookmarkClient({books, initBookmarked, totalBooks}:{book
             return newSet;
         });
         setBookList(pv => pv.filter((b) => b._id!==_id));
+        setTotalBooks(pv => pv-deletedCount);
     } catch(err) {
         alert("Bookmark failed");
     }
@@ -77,6 +80,7 @@ export default function BookmarkClient({books, initBookmarked, totalBooks}:{book
             })
         })
         if(!res.ok) throw new Error("Delete failed");
+        const {deletedCount} = await res.json();
         setBookList(pv => pv.filter((b) => !removeIdList.has(b._id)));
         setBookmarkedSet(pv => {
             const newSet = new Set(pv);
@@ -84,7 +88,8 @@ export default function BookmarkClient({books, initBookmarked, totalBooks}:{book
                 if(removeIdList.has(b)) newSet.delete(b);
             })
             return newSet;
-        })
+        });
+        setTotalBooks(pv => pv-deletedCount);
     } catch(err) {
         alert("Delete failed");
     } finally {

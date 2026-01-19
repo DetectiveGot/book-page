@@ -28,6 +28,6 @@ export default async function Page() {
         _id: b._id.toString(),
     }));
     return (
-        <BookmarkClient books={bookRes} initBookmarked={bookmarksId} totalBooks={totalBooks}/>
+        <BookmarkClient books={bookRes} initBookmarked={bookmarksId} initBooks={totalBooks}/>
     )
 }
