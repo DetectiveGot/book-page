@@ -5,15 +5,19 @@ import bookModel from "@/models/bookModel";
 import bookmarkModel from "@/models/bookmarkModel";
 import type { Book, Bookmark } from "@/types/types";
 import BookmarkClient from "./bookmarkClient";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-    await connectMongoDB();
     const session = await auth0.getSession();
     const userSub = session?.user.sub;
+    if(!userSub) {
+        redirect('/auth/login');
+    }
+    await connectMongoDB();
 
     let books: Book[] = [];
     let bookmarksId: string[] = [];
-    let totalBooks = 1;
+    let totalBooks = 0;
     if(userSub) {
         const [bookmarks, _totalBooks] = await Promise.all([
             await bookmarkModel.find({userSub}).select({bookId: 1}).limit(20).lean(),

@@ -18,15 +18,17 @@ export default async function Home() {
   ]);
   const bookIds = books.map(b => b._id);
   let bookmarkedList: string[] = [];
+  let isLogged = false;
   if(userSub) {
     const bookmarks = await bookmarkModel.find({userSub, bookId: {$in: bookIds}}).limit(PER_PAGE).select({bookId: 1}).lean();
     bookmarkedList = bookmarks.map(b => b.bookId.toString());
+    isLogged = true;
   }
   const bookRes = books.map(b => ({
     ...b,
     _id: b._id.toString(),
   }));
   return (
-    <BooksClient books={bookRes} initBookmarked={bookmarkedList} totalBooks={totalBooks}/>
+    <BooksClient books={bookRes} initBookmarked={bookmarkedList} totalBooks={totalBooks} isLogged={isLogged}/>
   )
 }

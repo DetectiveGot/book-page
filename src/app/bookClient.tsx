@@ -9,19 +9,25 @@ import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const PER_PAGE = 12;
 
-export default function BookClient({books, initBookmarked, totalBooks}:{books: Book[], initBookmarked: string[], totalBooks: number}) {
+export default function BookClient({books, initBookmarked, totalBooks, isLogged}:{books: Book[], initBookmarked: string[], totalBooks: number, isLogged: boolean}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [bannerList, setBannerList] = useState<Banner[]>(banners);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPage = Math.ceil(totalBooks/PER_PAGE);
+  const router = useRouter();
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
+    if(!isLogged) {
+      router.push('/auth/login');
+      return;
+    }
     const cur = bookList.find(b => b._id===_id);
     if(!cur) return;
     const newFav = !bookmarkedSet.has(_id);
