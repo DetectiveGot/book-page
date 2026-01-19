@@ -10,13 +10,13 @@ const Navbar = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
     const { user } = useUser();
     return (
         <nav ref={ref} {...props}
-            className={cn("shadow content-center", className)}
+            className={cn("shadow content-center text-sm md:text-base", className)}
         >
-            <Container className="flex items-center justify-between py-4">
-                <div className="font-bold text-lg">
+            <Container className="flex items-center justify-between py-4 gap-x-12">
+                <div className="font-bold shrink-0">
                     <Link href='/'><Button>Book Page</Button></Link>
                 </div>
-                <div className="flex gap-x-3 min-w-0 max-w-xl">
+                <div className="flex gap-x-3 min-w-0 items-center">
                     
                     {(() => {
                         if(!user) {
@@ -24,7 +24,7 @@ const Navbar = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
                         }
                         return (
                             <>
-                                <div className="relative aspect-square w-auto h-8 rounded-full overflow-hidden">
+                                <div className="relative aspect-square w-auto h-8 rounded-full overflow-hidden shrink-0">
                                     <Image
                                         src={user.picture??""}
                                         alt="profile image"
@@ -33,7 +33,7 @@ const Navbar = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
                                     />
                                 </div>
                                 <p className="truncate font-semibold">{user.nickname}</p>
-                                <Link href={'/auth/logout'}><Button>Log out</Button></Link>
+                                <Link href={'/auth/logout'} className="shrink-0"><Button>Log out</Button></Link>
                             </>
                         )
                     })()}
