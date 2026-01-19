@@ -117,7 +117,7 @@ export default function BookClient({books, initBookmarked, totalBooks, isLogged}
                 } else for(let i=currentPage+1;i<=totalPage;i++) pages.push(i);
                 return pages.map((p, i) => {
                     if(p==='...') return <span key={i}>...</span>
-                    return <Button key={i} className="transition-opacity duration-100 hover:opacity-50" onClick={async () => goToPage(p)}>{p}</Button>
+                    return <Button key={i} variant={'square'} size={'square'} className={cn("transition-opacity duration-100 hover:opacity-50", p===currentPage&&"bg-stone-200")} onClick={async () => goToPage(p)}>{p}</Button>
                 })
               })()}
             </div>
