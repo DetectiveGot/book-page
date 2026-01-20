@@ -13,11 +13,10 @@ import { useRouter } from "next/navigation";
 
 const PER_PAGE = 12;
 
-export default function BookClient({books, initBookmarked, totalBooks, isLogged}:{books: Book[], initBookmarked: string[], totalBooks: number, isLogged: boolean}) {
+export default function BookClient({books, initBookmarked, totalBooks, isLogged, initBanners}:{books: Book[], initBookmarked: string[], totalBooks: number, isLogged: boolean, initBanners: Banner[]}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [editingMode, setEditingMode] = useState<boolean>(false);
-  const [bannerList, setBannerList] = useState<Banner[]>(banners);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPage = Math.ceil(totalBooks/PER_PAGE);
   const router = useRouter();
@@ -69,7 +68,7 @@ export default function BookClient({books, initBookmarked, totalBooks, isLogged}
     <div>
       <Navbar/>
       <section className="">
-        <ImageSlider banners={bannerList}/>
+        <ImageSlider banners={initBanners}/>
       </section>
       <main>
         <section className="border border-stone-300">

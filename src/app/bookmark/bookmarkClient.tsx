@@ -4,7 +4,6 @@ import { BookCard } from "@/component/BookCard";
 import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/ui/Container";
 import { ImageSlider } from "@/component/ImageSlider";
-import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";
@@ -12,12 +11,11 @@ import { cn } from "@/lib/utils";
 
 const PER_PAGE = 12;
 
-export default function BookmarkClient({books, initBookmarked, initBooks}:{books: Book[], initBookmarked: string[], initBooks: number}) {
+export default function BookmarkClient({books, initBookmarked, initBooks, initBanners}:{books: Book[], initBookmarked: string[], initBooks: number, initBanners: Banner[]}) {
   const [bookList, setBookList] = useState<Book[]>(books);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(() => new Set(initBookmarked));
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [removeIdList, setRemoveIdList] = useState<Set<string>>(new Set());
-  const [bannerList, setBannerList] = useState<Banner[]>(banners);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalBooks, setTotalBooks] = useState<number>(initBooks);
   const totalPage = Math.ceil(totalBooks/PER_PAGE);
@@ -120,7 +118,7 @@ export default function BookmarkClient({books, initBookmarked, initBooks}:{books
     <div>
       <Navbar/>
       <section className="">
-        <ImageSlider banners={bannerList}/>
+        <ImageSlider banners={initBanners}/>
       </section>
       <main>
         <section className="border border-stone-300">

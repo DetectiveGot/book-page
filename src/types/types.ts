@@ -12,9 +12,9 @@ export type Book = {
 
 export type Banner = {
     _id: string,
-    title: string,
+    // title: string,
     imageUrl: string,
-    linkUrl: string,
+    bookId: string,
 }
 
 export type Bookmark = {
