@@ -22,10 +22,10 @@ export default function BookClient({books, initBookmarked, totalBooks, isLogged,
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
-    if(!isLogged) {
-      router.push('/auth/login');
-      return;
-    }
+    // if(!isLogged) {
+    //   router.push('/auth/login');
+    //   return;
+    // }
     const cur = bookList.find(b => b._id===_id);
     if(!cur) return;
     const newFav = !bookmarkedSet.has(_id);
@@ -39,6 +39,11 @@ export default function BookClient({books, initBookmarked, totalBooks, isLogged,
                 bookIds: [_id]
             }),
         });
+        console.log(res);
+        if(res.status===401) {
+          router.push('/auth/login');
+          return;
+        }
         if(!res.ok) throw new Error("Failed");
         setBookmarkedSet(pv => {
             const newSet = new Set(pv);
@@ -53,6 +58,10 @@ export default function BookClient({books, initBookmarked, totalBooks, isLogged,
 
   const goToPage = async (page: number) => {
     const res = await fetch(`/api/books?page=${page}`);
+    if(res.status===401) {
+      router.push('/auth/login');
+      return;
+    }
     if(!res.ok) {
         alert("Failed to fetch books");
         throw new Error("Failed to fetch books");

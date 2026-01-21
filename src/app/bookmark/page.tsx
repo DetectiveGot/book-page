@@ -3,9 +3,9 @@ import { auth0 } from "@/lib/auth0";
 import { connectMongoDB } from "@/lib/mongoosedb";
 import bookModel from "@/models/bookModel";
 import bookmarkModel from "@/models/bookmarkModel";
-import type { Book, Bookmark } from "@/types/types";
+import type { Book } from "@/types/types";
 import BookmarkClient from "./bookmarkClient";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import bannerModel from "@/models/bannerModel";
 
 const PER_PAGE = 12;
@@ -14,9 +14,9 @@ const BANNER_LIM = 5;
 export default async function Page() {
     const session = await auth0.getSession();
     const userSub = session?.user.sub;
-    if(!userSub) {
-        redirect('/auth/login');
-    }
+    // if(!userSub) {
+    //     redirect('/auth/login');
+    // }
     await connectMongoDB();
 
     let books: Book[] = [];
