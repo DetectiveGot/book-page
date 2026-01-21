@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Container } from "@/ui/Container";
 import { cn } from "@/lib/utils";
 import { ImageSlider } from "@/component/ImageSlider";
-import { banners } from "@/data/banners";
 import { Button } from "@/ui/button";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";

@@ -1,7 +1,7 @@
 "use client"
-import type { Book, Banner, Bookmark } from "@/types/types";
+import type { Book, Banner } from "@/types/types";
 import { BookCard } from "@/component/BookCard";
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { Container } from "@/ui/Container";
 import { ImageSlider } from "@/component/ImageSlider";
 import { Button } from "@/ui/button";
