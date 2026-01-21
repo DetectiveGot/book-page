@@ -8,6 +8,7 @@ import { Button } from "@/ui/button";
 import { Navbar } from "@/component/Navbar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const PER_PAGE = 12;
 
@@ -19,6 +20,7 @@ export default function BookmarkClient({books, initBookmarked, initBooks, initBa
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalBooks, setTotalBooks] = useState<number>(initBooks);
   const totalPage = Math.ceil(totalBooks/PER_PAGE);
+  const router = useRouter();
 
   const toggleFav = async (_id: string) => {
     if(editingMode) return;
@@ -33,6 +35,10 @@ export default function BookmarkClient({books, initBookmarked, initBooks, initBa
             },
             body: JSON.stringify({bookIds: [_id]}),
         });
+        if(res.status===401) {
+          router.push('/auth/login');
+          return;
+        }
         if(!res.ok) throw new Error("Failed");
         const {deletedCount} = await res.json();
         setBookmarkedSet(pv => {
@@ -78,6 +84,10 @@ export default function BookmarkClient({books, initBookmarked, initBooks, initBa
                 bookIds: Array.from(removeIdList),
             })
         })
+        if(res.status===401) {
+          router.push('/auth/login');
+          return;
+        }
         if(!res.ok) throw new Error("Delete failed");
         const {deletedCount} = await res.json();
         setBookList(pv => pv.filter((b) => !removeIdList.has(b._id)));
@@ -104,6 +114,10 @@ export default function BookmarkClient({books, initBookmarked, initBooks, initBa
 
   const goToPage = async (page: number) => {
     const res = await fetch(`/api/bookmarks?page=${page}`);
+    if(res.status===401) {
+      router.push('/auth/login');
+      return;
+    }
     if(!res.ok) {
         alert("Failed to fetch books");
         throw new Error("Failed to fetch books");
