@@ -1,10 +1,10 @@
 import { connectMongoDB } from "@/lib/mongoosedb";
 import bookModel from "@/models/bookModel";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, {params}:{params: {id: string}}) {
-    const {id} = params;
+export async function GET(req: NextRequest, {params}:{params: Promise<{id: string}>}) {
+    const {id} = await params;
     await connectMongoDB();
     if(!mongoose.Types.ObjectId.isValid(id)){
         return NextResponse.json({error: "Invalid Book"}, {status: 400});
