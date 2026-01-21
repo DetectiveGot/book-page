@@ -1,18 +1,24 @@
 export type Book = {
-    id: number
+    _id: string
     title: string,
     author: string,
     chapter: number,
-    currentChapter: number,
-    isFav: boolean,
+    // currentChapter: number,
+    // isFav: boolean,
     imageUrl: string,
     genre: string[]|null,
     description: string,
 };
 
 export type Banner = {
-    id: number,
-    title: string,
+    _id: string,
+    // title: string,
     imageUrl: string,
-    linkUrl: string,
+    bookId: string,
+}
+
+export type Bookmark = {
+    _id: string,
+    bookId: string,
+    userSub: string,
 }

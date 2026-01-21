@@ -1,4 +1,4 @@
-import { Book } from "@/types/types";
+import type { Book } from "@/types/types";
 import Image from "next/image";
 import { Bookmark, Circle, CircleCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,27 +9,26 @@ import Link from "next/link";
 
 type BookCardProps = React.HTMLAttributes<HTMLDivElement> & {
     book: Book;
-    toggleFav: (id: number) => void;
-    editingMode: boolean;
-    toggleRemoveFav: (id: number) => void;
-    toRemove: boolean;
+    toggleFav: (_id: string) => void;
+    editingMode?: boolean;
+    toggleRemoveFav?: (_id: string) => void;
+    bookmarkedSet?: Set<string>;
+    toRemove?: boolean;
 }
 
-const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, toggleFav, editingMode, toggleRemoveFav, toRemove, ...props}, ref) => {
+const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, toggleFav, editingMode, toggleRemoveFav, toRemove, bookmarkedSet, ...props}, ref) => {
     const {
-        id,
+        _id,
         title,
         author,
         chapter,
-        currentChapter,
-        isFav,
         imageUrl,
         genre,
         description
     } = book;
     return (
         <div ref={ref} className={cn(className, "flex justify-between rounded-md shadow h-24 lg:h-32 transition-shadow duration-100 hover:shadow-stone-300")} {...props}>
-            <Link href={`/book/${id}`} className="min-w-0 flex-1">
+            <Link href={`/book/${_id}`} className="min-w-0 flex-1">
                 <div className="flex h-full">
                     <div className="shrink-0 h-full w-20 lg:w-24 relative">
                         <Image 
@@ -47,20 +46,22 @@ const BookCard = forwardRef<HTMLDivElement, BookCardProps>(({className, book, to
                         </div>
                         <footer className="text-gray-500 text-xs md:text-sm">
                             <p className="truncate">Chapter: {chapter}</p>
-                            <p className="truncate">Current: {currentChapter}</p>
+                            {/* <p className="truncate">Current: {currentChapter}</p> */}
                         </footer>
                     </div>
                 </div>
             </Link>
             <Button className="border-l border-r-stone-300 p-2"
                 onClick={() => {
-                    if(!editingMode) toggleFav(id);
-                    else toggleRemoveFav(id);
+                    if(!editingMode) toggleFav(_id);
+                    else {
+                        if(toggleRemoveFav) toggleRemoveFav(_id);
+                    } 
                 }}
             >
                 {(() => {
                     if(editingMode) return toRemove?<CircleCheck className="w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70"/>:<Circle className="w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70"/>;
-                    return <Bookmark className={cn("w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70",book.isFav&&"fill-yellow-300")}/>;
+                    return <Bookmark className={cn("w-4 h-4 sm:w-6 sm:h-6 transition-opacity duration-75 hover:opacity-70", bookmarkedSet?.has(_id)&&"fill-yellow-300")}/>;
                 })()}
             </Button>
         </div>
